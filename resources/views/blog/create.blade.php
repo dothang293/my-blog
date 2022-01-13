@@ -64,4 +64,3 @@
     </form>
 </div>
 
-@endsection

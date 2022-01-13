@@ -138,7 +138,7 @@ class PostsController extends Controller
     {
         $post = Post::where('slug', $id);
 
-        unlink(public_path('images/'.$post->first()->img_path));
+        // unlink(public_path('images/'.$post->first()->img_path));
 
         $post->delete();
 

@@ -88,7 +88,7 @@
                                     <a class="nav-link text-white" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
                             @endif
-                            <a class="text-white nav-item nav-link ml-auto" href="#ContactInfo">Contact</a>
+                            <a class="text-white nav-item nav-link ml-auto" href="{{ url('/contact') }}">Contact</a>
                         @else
                             <li class="nav-item ml-auto dropdown">
                                 <a id="navbarDropdown" class="nav-link text-white dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
