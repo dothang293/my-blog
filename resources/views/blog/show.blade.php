@@ -14,7 +14,7 @@
             </p>
 
             <div>
-                <img src=" {{ url('images/'.$post->img_path) }}" alt="" style="width:100%">
+                <img src="{{ url($post->img_path) }}" alt="" style="width:100%">
             </div>
         </div>
     </div>

@@ -44,14 +44,16 @@ class PostsController extends Controller
             'description' => 'required',
             'image' => 'required|image|mimes:jpg,bmp,png,jpeg|max:5048'
         ]);
-        $newImageName = uniqid().'-'.$request->title.'.'.$request->image->extension();
+        $newImageID = uniqid().'-'.$request->title;
+        
+        $imageURL= $request->image->storeOnCloudinaryAs('myblog', $newImageID)->getSecurePath();
 
-        $request->image->move(public_path('images'),$newImageName);
+        // $request->image->move(public_path('images'),$newImageName);
 
         Post::create([
             'title' => $request->title,
             'description' => $request->description,
-            'img_path' => $newImageName,
+            'img_path' => $imageURL,
             'slug' => SlugService::createSlug(Post::class, 'slug', $request->title),
             'user_id' => auth()->user()->id 
         ]);
@@ -100,26 +102,41 @@ class PostsController extends Controller
         ]);
 
         if (isset($request->image) && $request->image) {
-            $newImageName = uniqid().'-'.$request->title.'.'.$request->image->extension();
+            $newImageID = uniqid().'-'.$request->title;
 
-            $request->image->move(public_path('images'),$newImageName);
+            $image = Post::where('slug', $id)->first()->img_path;
 
-            unlink(public_path('images/'.Post::where('slug', $id)->first()->img_path));
+            $imageID = explode("/", $image);
+
+            $imageID = explode(".", last($imageID));
+
+            $imageID = $imageID[0];
+
+            $imageURL= $request->image->storeOnCloudinaryAs('myblog', $newImageID)->getSecurePath();
+            // $request->image->move(public_path('images'),$newImageName);
+            
+            cloudinary()->uploadApi()->destroy('myblog/'.$imageID);
         } else {
-            $image = public_path('images/'.Post::where('slug', $id)->first()->img_path);
+            $image = Post::where('slug', $id)->first()->img_path;
 
-            $ext = pathinfo($image, PATHINFO_EXTENSION);
+            $imageID = explode("/", $image);
 
-            $newImageName = uniqid().'-'.$request->title.'.'.$ext;
+            $imageID = explode(".", last($imageID));
 
-            rename($image,public_path('images/'.$newImageName));
+            $imageID = $imageID[0];
+     
+            $newImageID = uniqid().'-'.$request->title;
+
+            $imageURL = cloudinary()->uploadFile($image,['public_id' => $newImageID, 'folder' => 'myblog'])->getSecurePath();
+            
+            cloudinary()->uploadApi()->destroy('myblog/'.$imageID);
         }
 
         Post::where('slug', $id)
             ->update([
                 'title' => $request->title,
                 'description' => $request->description,
-                'img_path' => $newImageName,
+                'img_path' => $imageURL,
                 'slug' => SlugService::createSlug(Post::class, 'slug', $request->title),
                 'user_id' => auth()->user()->id                 
             ]);
@@ -139,6 +156,15 @@ class PostsController extends Controller
         $post = Post::where('slug', $id);
 
         // unlink(public_path('images/'.$post->first()->img_path));
+        $image = $post->first()->img_path;
+
+        $imageID = explode("/", $image);
+
+        $imageID = explode(".", last($imageID));
+
+        $imageID = $imageID[0];
+        
+        cloudinary()->uploadApi()->destroy('myblog/'.$imageID);
 
         $post->delete();
 

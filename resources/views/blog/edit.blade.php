@@ -20,7 +20,7 @@
 
 <div class="container-fluid col-11">
     <form 
-        action="/blog/{{ $post->slug}}"
+        action="/blog/{{ $post->slug }}"
         method="POST"
         enctype="multipart/form-data">
         @csrf

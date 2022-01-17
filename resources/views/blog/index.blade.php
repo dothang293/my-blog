@@ -35,7 +35,7 @@
         <div class="container-fluid col-11 d-block border-bottom">
             <div class="row py-5">
                 <div class="col-6">
-                    <img src="{{ url('images/'.$post->img_path) }}" alt="" style="width:100%">
+                    <img src="{{ url($post->img_path) }}" alt="" style="width:100%">
                 </div>
 
                 <div class="col-5">
